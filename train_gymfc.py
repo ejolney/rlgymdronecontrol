@@ -1,8 +1,9 @@
-import os
+import os, csv
 import numpy as np
 from mpi4py import MPI
 from baselines.common import tf_util as U
 from baselines import logger
+from shutil import copyfile
 import gymfc
 import gym
 
@@ -20,7 +21,22 @@ class trainParams():
 		self.lam = 0.95  # Advantage estimator parameter (lambda)
 		self.schedule='linear'  # Change action randomness through 
 		self.seed = 0  # Which random seed to use
-		self.model_path = None  # Where to save model
+		self.model_path = None # Where to save model
+#		self.model_name = None # Model name
+
+	def modelName(self, name):
+		self.model_name=name
+		self.model_dir=os.environ['GYMFC_EXP_MODELSDIR']+name
+		self.model_path=self.model_dir+'/'+name
+#		if self.model_path:
+#			return self.model_path.split('/')[len(self.model_path.split('/'))-1]
+#		else:
+#			raise Exception('this trainParams has no model_path set')
+
+	def modelDir(self):
+		model_name = self.modelName()
+		return self.model_path[:-len(model_name)]
+
 
 class policyParams():
 	def __init__(self):
@@ -37,6 +53,9 @@ class RewScale(gym.RewardWrapper):
 
 
 def train(train_params, policy_params, env_id):
+	# Refresh training progress log	
+	logger._configure_default_logger()
+
 	from baselines.ppo1 import mlp_policy, pposgd_simple
 	U.make_session(num_cpu=1).__enter__()
 	def policy_fn(name, ob_space, ac_space):
@@ -69,26 +88,55 @@ def train(train_params, policy_params, env_id):
 	)
 	env.close
 
-	# Save Trained Model
+	# Save Trained Model an meta data
 	print(train_params.model_path)
 	if train_params.model_path:
+		# Make Dir
+		model_log_dir=os.environ['GYMFC_EXP_MODELSDIR']+train_params.model_name
+		os.makedirs(train_params.model_dir, exist_ok=True)
+
+		# Merge Metadata
+		meta_data = {**vars(train_params), **vars(policy_params)}
+
+		# Save Metadata as csv
+		md_file = train_params.model_dir+'/'+'metadata.csv'
+		md_keys = meta_data.keys()
+		try:
+			with open(md_file, 'w') as mdfile:
+				writer = csv.DictWriter(mdfile, fieldnames = md_keys)
+				writer.writeheader()
+				writer.writerow(meta_data)
+		except IOError:
+			print("I/O error")
+
+		# Save Model
 		U.save_variables(train_params.model_path)
+
+		# Save Training Progress file
+		log_path = os.environ['OPENAI_LOGDIR']+'progress.csv'  # train prog log 
+		copyfile(log_path, train_params.model_dir+'/'+'log.csv') # copy log csv
+		
 	else:
-		print('No save path')
+		print('model not named')
 	return pi
 
 
-def runExp():
+def setVars():
 	# Set up env Variables
+	os.environ['GYMFC_CONFIG'] = '/home/acit/gymfc/examples/configs/iris.config'
 	os.environ['OPENAI_LOGDIR'] = '/home/acit/gymlogs/'
 	os.environ['OPENAI_LOG_FORMAT'] = 'stdout,log,csv'
+	os.environ['GYMFC_EXP_MODELSDIR'] = '/home/acit/gymlogs/models/'
 
+
+def runExp():
 	# Set up training Paramters	
 	train_params = trainParams()
-	train_params.num_timesteps = 10000000
+	train_params.num_timesteps = 4000
 	train_params.timesteps_per_actorbatch = 2000
-	train_params.optim_batchsize = 100
-	train_params.model_path = '/home/acit/gymlogs/models/testModel'
+	train_params.optim_batchsize = 20
+	train_params.optim_epochs = 2
+	train_params.modelName('TESTYModel')
 
 	# Set up policy Parameters
 	policy_params = policyParams()

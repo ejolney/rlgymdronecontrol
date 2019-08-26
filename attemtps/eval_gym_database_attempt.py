@@ -1,4 +1,4 @@
-import os, csv, pickle, json
+import os
 import numpy as np
 import pandas as pd
 from baselines.common import tf_util as U
@@ -124,7 +124,6 @@ class ModelEval:
 		pp = tg.policyParams()
 
 		# Initialize and load model
-		if tp.model_path: tp.model_path = None # prevent override of model
 		with U.tf.Graph().as_default():		# Allow Re-running of tf
 			pi = tg.train(tp, pp, self.env_id)
 
@@ -265,33 +264,45 @@ class ModelEval:
 
 		plt.show()
 
-
-	def saveEval(self, save_name=None):
-		if save_name: eval_file = self.model_dir+'/'+save_name+'.obj'
-		else: eval_file = self.model_path+'_eval.obj'
-
-		try:
-			with open(eval_file, 'wb') as evalfile:
-				pickle.dump(self, evalfile)
-		except IOError:
-			print("I/O error")
+	def save_to_database(self, eps, db_path):
+	# Save model evaluation data into database for future use
+		conn = sqlite3.connect(db_path)  # Connection to database
+		c = conn.cursor()  # Create cursor for executing commands
+		
+		# Create Tables
+		#c.execute('''CREATE TABLE'''
 
 
-def loadEval(model_name, eval_name=None):
-	if eval_name: 
-		if eval_name.endswith('.obj'):
-			eval_filename = eval_name+'.obj'
-	else: eval_filename = model_name+'_eval.obj'
+def save_to_database(eps, db_path):
+# Save model evaluation data into database for future use
+	print('saving model eval database to {}.',format(db_path))
 
-	load_path = os.environ['GYMFC_EXP_MODELSDIR']+model_name+'/'+ eval_filename
+	conn = sqlite3.connect(db_path)  # Connection to database
+	c = conn.cursor()  # Create cursor for executing commands
 	
-	if os.path.isfile(load_path):
-		with open(load_path, 'rb') as evalfile:
-			model_eval = pickle.load(evalfile)
-	else:
-		raise Exception('Eval obj not found at: {}.'.format(load_path))
-			
-	return model_eval
+
+	# Create Tables
+	sql_cmd = ('''CREATE TABLE ep (
+	ep_number INTEGER PRIMARY KEY,
+mode	model_name ,
+	env_id ,
+	eps_avg_r ,
+	eps_fin_r ,
+	eps_del_r ,
+trainl	ep_avg_len ,
+	rew_avg ,
+	ep_this_iter ,
+	episodes ,
+	timesteps ,
+	time_secs ,
+	ev_tdlam_before ,
+	ent_loss ,
+	kl_loss ,
+	entpen_pol_loss ,
+	surr_pol_loss ,
+	vf_loss ,
+meta
+	'''
 
 
 def debugInitialize():
