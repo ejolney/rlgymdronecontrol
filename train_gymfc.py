@@ -130,24 +130,30 @@ def setVars():
 
 
 def runExp():
+	setVars()
+
 	# Set up training Paramters	
 	train_params = trainParams()
 	train_params.num_timesteps = 4000
 	train_params.timesteps_per_actorbatch = 2000
 	train_params.optim_batchsize = 20
 	train_params.optim_epochs = 2
-	train_params.modelName('TESTYModel')
+	train_params.modelName('noesc01')
 
 	# Set up policy Parameters
 	policy_params = policyParams()
 
 	# Gym environment
-	env_id = 'AttFC_GyroErr-MotorVel_M4_Ep-v0'
+	env = ('AttFC_GyroErr-MotorVel_M4_Ep-v0', 'AttFC_GyroErr-MotorVel_M4_Con-v0',
+		'AttFC_GyroErr1_M4_Ep-v0')
+	env_id = env[2]
 
 	# Run Training
 	with U.tf.Graph().as_default():
 		train(train_params, policy_params, env_id)
 
+print ('Setting Environment Variables')
+setVars()
 
 #if __name__ == '__main__':
 

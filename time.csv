@@ -1,0 +1,3 @@
+model_name,num_timesteps,timesteps_per_actorbatch,clip_param,entcoeff,optim_epochs,optim_batchsize,nodes_per_layer,num_layers,train_time
+['noesc01'],[1000000],[500],[0.1],[0.],[5],[32],[32],[2],[9243.65781069]
+['noesc02'],[2000000],[500],[0.1],[0.],[5],[32],[32],[2],[6423.22673488]
