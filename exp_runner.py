@@ -1,6 +1,10 @@
 import time, os, csv
 import train_gymfc as tg
 import eval_gymfc as eg
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
 from baselines.common import tf_util as U
 
 
@@ -17,11 +21,11 @@ def noescExp():
 	tp.optim_epochs = 5
 
 	# Set training length
-	num_eps = 2000
+	num_eps = 2500
 	tp.num_timesteps = num_eps*1000
 
 	# Name Model
-	tp.modelName('noesc02')
+	tp.modelName('noesc02_r')
 
 	#Run Training
 	with tg.U.tf.Graph().as_default():
@@ -29,7 +33,7 @@ def noescExp():
 
 	# Model Evaluation
 	me = eg.ModelEval(tp.model_name, cur_env)
-#	me.evalModel(20)
+	me.evalModel(20)
 	me.saveEval()
 
 def timeExp():
@@ -82,7 +86,7 @@ def timeExp():
 			tp.num_timesteps = cur_params['num_timesteps_exp']
 			tp.timesteps_per_actorbatch = cur_params['timesteps_per_actorbatch_exp']
 			tp.clip_param = cur_params['clip_param_exp']
-			tp.entcoedd = cur_params['entcoeff_exp']
+			tp.entcoeff = cur_params['entcoeff_exp']
 			tp.optim_epochs = cur_params['optim_epochs_exp']
 			tp.optim_batchsize = cur_params['optim_batchsize_exp']
 			tp.modelName(cur_params['model_name'])
@@ -146,6 +150,7 @@ def analyzeTimeResults(mn_list, a_csv=None):
 			print("I/O error with analysis csv")
 
 def readTimex(timexpath):
+
 	txdict = {}
 	txd=[]
 	with open(timexpath, 'r') as txcsv:
@@ -161,15 +166,67 @@ def readTimex(timexpath):
 			txdict[hds] = txd[hdcnt]
 			hdcnt+=1
 		return txdict
-			
+
+
+def timeAnalysis(timexpath, txdict=None):
+	sns.set()
+	z_buff = .00000000000001
+	data = pd.read_csv(timexpath)
+	data = data.applymap(lambda x: x.strip('[]')) # remove brackets from strings
+	data = data.drop(columns='model_name')
+	data = data.astype('float')
+	
+#	data = (data-data.mean())/data.std()  # Normalize data (mean normalization)
+#	data = (data - data.min())/(data.max()-data.min()+z_buff)  #Normalize data (max-min norm)
+	data = data.applymap(lambda x: x+z_buff) # turn 0s into non-zeros
+	corr = data.corr()
+	ax = sns.heatmap(corr)
+	plt.show()
+	
+def readTx(txp):
+	data = pd.read_csv(txp)
+	data = data.applymap(lambda x: x.strip('[]')) # remove brackets from strings
+	types = {}
+
+	# Create pairs of values to training time in dict
+	for i in range(1,len(data.keys())):
+		typ = data.keys()[i]
+		rows = data.loc[data['model_name'].str.find(typ)>0]
+		types[typ] = rows[[typ,'train_time']].values.astype(float)
+	return types
+
+def checkR(model):
+	me = eg.ModelEval(model,'AttFC_GyroErr1_M4_Ep-v0')
+	me.evalModel(3)
+	print('Average Reward: ', me.proc_eval.eps_avg_r)
+	print('Max Rewards: ', me.proc_eval.eps_max_r)
+	print('Rise times: ')
+	print(me.proc_eval.eps_r_rise,me.proc_eval.eps_p_rise,me.proc_eval.eps_y_rise, sep='\n')
+	print('-----Beginning-----')
+	print('Rewards: ', 
+		me.eps[0]['rewards'][0:4],
+		me.eps[1]['rewards'][0:4],
+		me.eps[2]['rewards'][0:4], sep='\n')
+	print('-----End-----')
+	print('Rewards: ', 
+		me.eps[0]['rewards'][990:994],
+		me.eps[1]['rewards'][990:994],
+		me.eps[2]['rewards'][990:994], sep='\n')
+	print('-------------')
+	print('Total R: ', np.sum(me.eps[0]['rewards']),np.sum(me.eps[1]['rewards']),np.sum(me.eps[2]['rewards']))
+	me.proc_eval.plotResponse(0)
+	me.proc_eval.plotResponse(1)
+	me.proc_eval.plotResponse(2)
+	
 
 
 if __name__ == '__main__':
 	tg.setVars()
-#	noescExp()
-	timeExp()
-	mn_list = [m for m in os.listdir(os.environ['GYMFC_EXP_MODELSDIR']) if m.startswith('time_x')]
-	for mod in mn_list: print(mod)
-	acsv = '/home/acit/gymlogs/time01.csv'
-	analyzeTimeResults(mn_list, a_csv=acsv)
+#	checkR('noesc01_r')
+	noescExp()
+#	exp_id = 9
+#	timeExp()
+#	mn_list = [m for m in os.listdir(os.environ['GYMFC_EXP_MODELSDIR']) if m.startswith('time_x')]
+#	acsv = '/home/acit/gymlogs/txp'+str(exp_id)+'.csv'
+#	analyzeTimeResults(mn_list, a_csv=acsv)
 
