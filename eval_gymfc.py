@@ -2,6 +2,7 @@ import os, csv, pickle, json
 import numpy as np
 import pandas as pd
 from baselines.common import tf_util as U
+from mpi4py import MPI
 import gymfc
 import gym
 import sqlite3
@@ -59,8 +60,17 @@ class ModelEval:
 		
 		# Setup gym
 		env = gym.make(self.env_id)
+		# Seed Set
+		rank = MPI.COMM_WORLD.Get_rank()
+		workerseed = tp.seed + 1000000 * rank
+		env.seed(workerseed)
+
 		env.reset()
 		ob = env.reset()  # reset object for pi
+
+		print('----------=================--------------')
+		print('rank: ', rank, 'workerseed: ', workerseed)
+		print('----------=================--------------')
 
 		#env.render()
 		#input('Press enter to continue')

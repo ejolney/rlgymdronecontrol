@@ -72,6 +72,9 @@ def train(train_params, policy_params, env_id):
 	rank = MPI.COMM_WORLD.Get_rank()
 	workerseed = train_params.seed + 1000000 * rank
 	env.seed(workerseed)
+	print('----------=================--------------')
+	print('rank: ', rank, 'workerseed: ', workerseed)
+	print('----------=================--------------')
 
 	# Run Training with stochastic gradient descent
 	pi = pposgd_simple.learn(env, policy_fn,
@@ -124,9 +127,9 @@ def train(train_params, policy_params, env_id):
 def setVars():
 	# Set up env Variables
 	os.environ['GYMFC_CONFIG'] = '/home/acit/gymfc/examples/configs/iris.config'
-	os.environ['OPENAI_LOGDIR'] = '/home/acit/gymlogs/'
+	os.environ['OPENAI_LOGDIR'] = '/home/acit/gymfc/rlgymdronecontrol/gymlogs/'
 	os.environ['OPENAI_LOG_FORMAT'] = 'stdout,log,csv'
-	os.environ['GYMFC_EXP_MODELSDIR'] = '/home/acit/gymlogs/models/'
+	os.environ['GYMFC_EXP_MODELSDIR'] = '/home/acit/gymfc/rlgymdronecontrol/gymlogs/models/'
 
 
 def runExp():

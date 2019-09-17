@@ -21,11 +21,11 @@ def noescExp():
 	tp.optim_epochs = 5
 
 	# Set training length
-	num_eps = 2500
+	num_eps = 3000
 	tp.num_timesteps = num_eps*1000
 
 	# Name Model
-	tp.modelName('noesc02_r')
+	tp.modelName('noesc01_rsg')
 
 	#Run Training
 	with tg.U.tf.Graph().as_default():
@@ -35,6 +35,35 @@ def noescExp():
 	me = eg.ModelEval(tp.model_name, cur_env)
 	me.evalModel(20)
 	me.saveEval()
+
+def noescExpTest():
+	env = ('AttFC_GyroErr-MotorVel_M4_Ep-v0', 'AttFC_GyroErr-MotorVel_M4_Con-v0',
+		'AttFC_GyroErr1_M4_Ep-v0')
+	cur_env = env[2]
+	tp = tg.trainParams()
+	pp = tg.policyParams()
+
+	# Set up parameters
+	tp.timesteps_per_actorbatch = 500
+	tp.optim_batchsize = 32
+	tp.optim_epochs = 5
+
+	# Set training length
+	num_eps = 1
+	tp.num_timesteps = num_eps*1000
+
+	# Name Model
+	tp.modelName('noesc0t')
+
+	#Run Training
+	with tg.U.tf.Graph().as_default():
+		tg.train(tp,pp,cur_env)
+
+	# Model Evaluation
+	me = eg.ModelEval(tp.model_name, cur_env)
+	me.evalModel(2)
+	me.saveEval()
+
 
 def timeExp():
 	env_id = 'AttFC_GyroErr1_M4_Ep-v0'
@@ -213,16 +242,46 @@ def checkR(model):
 		me.eps[1]['rewards'][990:994],
 		me.eps[2]['rewards'][990:994], sep='\n')
 	print('-------------')
+	print('Desired: ', [me.eps[0]['droll_v'][0],me.eps[0]['dpitch_v'][0],me.eps[0]['dyaw_v'][0]])
 	print('Total R: ', np.sum(me.eps[0]['rewards']),np.sum(me.eps[1]['rewards']),np.sum(me.eps[2]['rewards']))
-	me.proc_eval.plotResponse(0)
-	me.proc_eval.plotResponse(1)
-	me.proc_eval.plotResponse(2)
-	
+#	me.proc_eval.plotResponse(0)
+#	me.proc_eval.plotResponse(1)
+#	me.proc_eval.plotResponse(2)
+
+def compute_reward(eps):
+	""" Compute the reward """
+	max_v = 6.2832
+	thr = .0628 # .0628-99.5% | .1257-99% | .6283-95%
+	speedFlag = 1
+	act_min = np.array([-1,-1,-1,-1])
+	act_max = np.array([1,1,1,1])
+	rr,re,rs,rg,ra=[],[],[],[],[]
+	cr,ce,cs,cg=1,.01,.1,1
+	for i in range(len(eps['actions'])):
+		err = np.array([eps['roll_err'][i],eps['pitch_err'][i],eps['yaw_err'][i]])
+		r_r = -np.clip(np.sum(np.abs(err))/(max_v*3), 0, 1) # err
+		r_e = -1*np.sum(np.abs(np.clip(eps['actions'][i],act_min,act_max))) # energy
+		r_s = -1 * speedFlag # speed
+		if np.all(np.abs(err)<thr): 
+			speedFlag = 0
+			r_g = 1 - np.sum(np.abs(eps['actions'][i]-np.clip(eps['actions'][i],act_min,act_max))) # goal - saturation
+			r_s = 0
+		else: r_g = 0
+		
+		rr.append(r_r*cr)
+		re.append(r_e*ce)
+		rs.append(r_s*cs)
+		rg.append(r_g*cg)
+		ra.append((r_r*cr)+(r_e*ce)+(r_s*cs)+(r_g*cg)) # all rewards
+
+	tots = [sum(rr),sum(re),sum(rs),sum(rg),sum(ra)]
+	return rr,re,rs,rg,ra,tots
 
 
 if __name__ == '__main__':
 	tg.setVars()
-#	checkR('noesc01_r')
+#	checkR('noesc04_r')
+#	noescExpTest()
 	noescExp()
 #	exp_id = 9
 #	timeExp()
