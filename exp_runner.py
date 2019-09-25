@@ -19,13 +19,15 @@ def noescExp():
 	tp.timesteps_per_actorbatch = 500
 	tp.optim_batchsize = 32
 	tp.optim_epochs = 5
+#	pp.num_layers = 3
+#	pp.nodes_per_layer=50
 
 	# Set training length
-	num_eps = 3000
+	num_eps = 10000
 	tp.num_timesteps = num_eps*1000
 
 	# Name Model
-	tp.modelName('noesc01_rsg')
+	tp.modelName('noesc01_rse')
 
 	#Run Training
 	with tg.U.tf.Graph().as_default():

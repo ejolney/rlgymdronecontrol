@@ -2,145 +2,20 @@ Logging to /home/acit/gymfc/rlgymdronecontrol/gymlogs/
 ********** Iteration 0 ************
 Optimizing...
      pol_surr |    pol_entpen |       vf_loss |            kl |           ent
-     -0.01134 |       0.00000 |       2.24934 |      1.20e-05 |       5.67516
-     -0.01215 |       0.00000 |       2.13666 |      3.36e-05 |       5.67344
-     -0.01104 |       0.00000 |       2.07855 |      7.36e-05 |       5.67209
-     -0.00223 |       0.00000 |       1.98399 |       0.00016 |       5.67096
-     -0.00316 |       0.00000 |       1.93011 |       0.00026 |       5.66997
+      0.00044 |       0.00000 |    3857.45581 |       0.00036 |       5.67314
 Evaluating losses...
-      0.00612 |       0.00000 |       1.87998 |       0.00031 |       5.66928
-------------------------------
-| EpisodesSoFar   | 0        |
-| EpLenMean       | nan      |
-| EpRewMean       | nan      |
-| EpThisIter      | 0        |
-| ev_tdlam_before | -0.044   |
-| loss_ent        | 5.67     |
-| loss_kl         | 0.000306 |
-| loss_pol_entpen | 0        |
-| loss_pol_surr   | 0.00612  |
-| loss_vf_loss    | 1.88     |
-| TimeElapsed     | 1.69     |
-| TimestepsSoFar  | 0        |
-------------------------------
-********** Iteration 1 ************
-Optimizing...
-     pol_surr |    pol_entpen |       vf_loss |            kl |           ent
-      0.00432 |       0.00000 |       1.60069 |      5.04e-06 |       5.66855
-      0.00644 |       0.00000 |       1.48635 |      4.76e-05 |       5.66748
-     -0.00582 |       0.00000 |       1.37692 |       0.00012 |       5.66646
-      0.00269 |       0.00000 |       1.29757 |       0.00030 |       5.66541
-      0.00071 |       0.00000 |       1.22418 |       0.00053 |       5.66423
-Evaluating losses...
-     -0.00661 |       0.00000 |       1.19117 |       0.00066 |       5.66357
-------------------------------
-| EpisodesSoFar   | 1        |
-| EpLenMean       | 1e+03    |
-| EpRewMean       | -84.7    |
-| EpThisIter      | 1        |
-| ev_tdlam_before | -1.24    |
-| loss_ent        | 5.66     |
-| loss_kl         | 0.000661 |
-| loss_pol_entpen | 0        |
-| loss_pol_surr   | -0.00661 |
-| loss_vf_loss    | 1.19     |
-| TimeElapsed     | 3.16     |
-| TimestepsSoFar  | 1e+03    |
-------------------------------
-********** Iteration 2 ************
-Optimizing...
-     pol_surr |    pol_entpen |       vf_loss |            kl |           ent
-      0.00012 |       0.00000 |       0.81781 |      6.50e-06 |       5.66352
-     -0.01599 |       0.00000 |       0.52074 |      5.95e-05 |       5.66444
-     -0.00406 |       0.00000 |       0.31527 |       0.00019 |       5.66549
-      0.01095 |       0.00000 |       0.18750 |       0.00037 |       5.66629
-     -0.00237 |       0.00000 |       0.11777 |       0.00067 |       5.66692
-Evaluating losses...
-      0.00016 |       0.00000 |       0.09357 |       0.00081 |       5.66731
-------------------------------
-| EpisodesSoFar   | 1        |
-| EpLenMean       | 1e+03    |
-| EpRewMean       | -84.7    |
-| EpThisIter      | 0        |
-| ev_tdlam_before | 0.0778   |
-| loss_ent        | 5.67     |
-| loss_kl         | 0.000811 |
-| loss_pol_entpen | 0        |
-| loss_pol_surr   | 0.00016  |
-| loss_vf_loss    | 0.0936   |
-| TimeElapsed     | 4.43     |
-| TimestepsSoFar  | 1e+03    |
-------------------------------
-********** Iteration 3 ************
-Optimizing...
-     pol_surr |    pol_entpen |       vf_loss |            kl |           ent
-      0.00448 |       0.00000 |       0.91562 |      1.25e-05 |       5.66750
-     -0.01172 |       0.00000 |       0.66352 |       0.00012 |       5.66833
-     -0.00833 |       0.00000 |       0.46336 |       0.00036 |       5.66920
-     -0.01630 |       0.00000 |       0.32048 |       0.00081 |       5.66996
-     -0.01138 |       0.00000 |       0.23085 |       0.00132 |       5.67076
-Evaluating losses...
-      0.00053 |       0.00000 |       0.19347 |       0.00166 |       5.67106
-------------------------------
-| EpisodesSoFar   | 2        |
-| EpLenMean       | 1e+03    |
-| EpRewMean       | -75.6    |
-| EpThisIter      | 1        |
-| ev_tdlam_before | 0.0947   |
-| loss_ent        | 5.67     |
-| loss_kl         | 0.00166  |
-| loss_pol_entpen | 0        |
-| loss_pol_surr   | 0.00053  |
-| loss_vf_loss    | 0.193    |
-| TimeElapsed     | 5.89     |
-| TimestepsSoFar  | 2e+03    |
-------------------------------
-********** Iteration 4 ************
-Optimizing...
-     pol_surr |    pol_entpen |       vf_loss |            kl |           ent
-     -0.01110 |       0.00000 |       0.74531 |      5.98e-06 |       5.67103
-     -0.01031 |       0.00000 |       0.41488 |      6.79e-05 |       5.67056
-      0.02268 |       0.00000 |       0.19958 |       0.00021 |       5.66988
-     -0.00419 |       0.00000 |       0.09478 |       0.00044 |       5.66904
-     -0.00243 |       0.00000 |       0.04850 |       0.00067 |       5.66840
-Evaluating losses...
-     -0.01031 |       0.00000 |       0.03496 |       0.00079 |       5.66818
-------------------------------
-| EpisodesSoFar   | 2        |
-| EpLenMean       | 1e+03    |
-| EpRewMean       | -75.6    |
-| EpThisIter      | 0        |
-| ev_tdlam_before | 0.0293   |
-| loss_ent        | 5.67     |
-| loss_kl         | 0.000789 |
-| loss_pol_entpen | 0        |
-| loss_pol_surr   | -0.0103  |
-| loss_vf_loss    | 0.035    |
-| TimeElapsed     | 7.15     |
-| TimestepsSoFar  | 2e+03    |
-------------------------------
-********** Iteration 5 ************
-Optimizing...
-     pol_surr |    pol_entpen |       vf_loss |            kl |           ent
-      0.00432 |       0.00000 |       0.71127 |      5.22e-05 |       5.66787
-     -0.00619 |       0.00000 |       0.48902 |       0.00042 |       5.66771
-     -0.01665 |       0.00000 |       0.32264 |       0.00104 |       5.66734
-      0.02224 |       0.00000 |       0.21532 |       0.00157 |       5.66692
-     -0.02011 |       0.00000 |       0.17158 |       0.00213 |       5.66630
-Evaluating losses...
-     -0.00293 |       0.00000 |       0.15095 |       0.00248 |       5.66605
-------------------------------
-| EpisodesSoFar   | 3        |
-| EpLenMean       | 1e+03    |
-| EpRewMean       | -71      |
-| EpThisIter      | 1        |
-| ev_tdlam_before | -0.33    |
-| loss_ent        | 5.67     |
-| loss_kl         | 0.00248  |
-| loss_pol_entpen | 0        |
-| loss_pol_surr   | -0.00293 |
-| loss_vf_loss    | 0.151    |
-| TimeElapsed     | 8.62     |
-| TimestepsSoFar  | 3e+03    |
-------------------------------
-********** Iteration 6 ************
+     -0.00359 |       0.00000 |    3804.45728 |       0.00043 |       5.67400
+-------------------------------
+| EpisodesSoFar   | 1         |
+| EpLenMean       | 1e+03     |
+| EpRewMean       | -3.72e+03 |
+| EpThisIter      | 1         |
+| ev_tdlam_before | -0.00223  |
+| loss_ent        | 5.67      |
+| loss_kl         | 0.000431  |
+| loss_pol_entpen | 0         |
+| loss_pol_surr   | -0.00359  |
+| loss_vf_loss    | 3.8e+03   |
+| TimeElapsed     | 6.87      |
+| TimestepsSoFar  | 1e+03     |
+-------------------------------
