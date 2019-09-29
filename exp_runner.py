@@ -27,7 +27,7 @@ def noescExp():
 	tp.num_timesteps = num_eps*1000
 
 	# Name Model
-	tp.modelName('noesc01_rse')
+	tp.modelName('exp10')
 
 	#Run Training
 	with tg.U.tf.Graph().as_default():
@@ -35,7 +35,7 @@ def noescExp():
 
 	# Model Evaluation
 	me = eg.ModelEval(tp.model_name, cur_env)
-	me.evalModel(20)
+	me.evalModel(50)
 	me.saveEval()
 
 def noescExpTest():
@@ -55,7 +55,7 @@ def noescExpTest():
 	tp.num_timesteps = num_eps*1000
 
 	# Name Model
-	tp.modelName('noesc0t')
+	tp.modelName('ctr')
 
 	#Run Training
 	with tg.U.tf.Graph().as_default():
@@ -63,7 +63,7 @@ def noescExpTest():
 
 	# Model Evaluation
 	me = eg.ModelEval(tp.model_name, cur_env)
-	me.evalModel(2)
+	me.evalModel(50)
 	me.saveEval()
 
 
@@ -258,10 +258,11 @@ def compute_reward(eps):
 	act_min = np.array([-1,-1,-1,-1])
 	act_max = np.array([1,1,1,1])
 	rr,re,rs,rg,ra=[],[],[],[],[]
-	cr,ce,cs,cg=1,.01,.1,1
+	cr,ce,cs,cg=1,1,1,1
 	for i in range(len(eps['actions'])):
 		err = np.array([eps['roll_err'][i],eps['pitch_err'][i],eps['yaw_err'][i]])
-		r_r = -np.clip(np.sum(np.abs(err))/(max_v*3), 0, 1) # err
+#		r_r = -np.clip(np.sum(np.abs(err))/(max_v*3), 0, 1) # err
+		r_r = -np.sum(np.square(err))
 		r_e = -1*np.sum(np.abs(np.clip(eps['actions'][i],act_min,act_max))) # energy
 		r_s = -1 * speedFlag # speed
 		if np.all(np.abs(err)<thr): 
@@ -283,8 +284,8 @@ def compute_reward(eps):
 if __name__ == '__main__':
 	tg.setVars()
 #	checkR('noesc04_r')
-#	noescExpTest()
-	noescExp()
+	noescExpTest()
+#	noescExp()
 #	exp_id = 9
 #	timeExp()
 #	mn_list = [m for m in os.listdir(os.environ['GYMFC_EXP_MODELSDIR']) if m.startswith('time_x')]
