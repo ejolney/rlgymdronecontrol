@@ -56,7 +56,7 @@ class ModelEval:
 		U.load_variables(tp.model_path)
 
 		# Make Training Log
-		self.train_log = TrainLog(tp.model_dir)
+		#self.train_log = TrainLog(tp.model_dir)
 		
 		# Setup gym
 		env = gym.make(self.env_id)
@@ -179,7 +179,7 @@ class TrainLog:
 
 			# Read log file
 			if os.path.isfile(log_file):
-				log = pd.read_csv(log_file)
+				log = pd.read_csv(log_file, encoding='utf-8', error_bad_lines=False)
 				self.parseLog(log)
 			else:
 				raise Exception('Log .csv file not found at: {}.'.format(log_file))

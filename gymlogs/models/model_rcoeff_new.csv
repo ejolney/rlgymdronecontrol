@@ -7,5 +7,4 @@ exp14,1,0.01,1,0.01,"Goal – saturation, error squared",10k
 exp15,1,0.01,0.01,0.1,"Goal – saturation, error squared",10k
 exp16,1,0.01,0.01,1,"Goal – saturation, error squared",10k
 exp17,2,0.01,0.01,0.01,"Goal – saturation, error squared",10k
-exp18,3,0.01,0.01,0.01,"Goal – saturation, error squared",10k
-exp19,4,0.01,0.01,0.01,"Goal – saturation, error squared",10k
+exp18,3,0.1,0.01,0.01,"Goal – saturation, error squared",10k

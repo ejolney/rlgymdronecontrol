@@ -27,7 +27,7 @@ def noescExp():
 	tp.num_timesteps = num_eps*1000
 
 	# Name Model
-	tp.modelName('exp10')
+	tp.modelName('exp20')
 
 	#Run Training
 	with tg.U.tf.Graph().as_default():
@@ -55,7 +55,7 @@ def noescExpTest():
 	tp.num_timesteps = num_eps*1000
 
 	# Name Model
-	tp.modelName('ctr')
+	tp.modelName('z10')
 
 	#Run Training
 	with tg.U.tf.Graph().as_default():
@@ -63,7 +63,7 @@ def noescExpTest():
 
 	# Model Evaluation
 	me = eg.ModelEval(tp.model_name, cur_env)
-	me.evalModel(50)
+	me.evalModel(15)
 	me.saveEval()
 
 
@@ -284,8 +284,9 @@ def compute_reward(eps):
 if __name__ == '__main__':
 	tg.setVars()
 #	checkR('noesc04_r')
-	noescExpTest()
-#	noescExp()
+#	noescExpTest()
+	noescExp()
+
 #	exp_id = 9
 #	timeExp()
 #	mn_list = [m for m in os.listdir(os.environ['GYMFC_EXP_MODELSDIR']) if m.startswith('time_x')]

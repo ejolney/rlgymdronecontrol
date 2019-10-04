@@ -9,3 +9,11 @@ noesc02_rs,1,0.01,0.1,1,Goal – saturation ,
 noesc01_rsg,1,0.01,0.1,1,Goal is 10 if not at saturation,10k
 noesc02_rsg,1,0.01,0.1,1,Goal is 10 if saturation in 10%,15k
 noesc01_rse,1,0.01,0.1,1,"Goal – saturation, error squared",10k
+exp10,1,0.01,0.01,0.01,"Goal – saturation, error squared",10k
+exp11,1,0.1,0.01,0.01,"Goal – saturation, error squared",10k
+exp12,1,1,0.01,0.01,"Goal – saturation, error squared",10k
+exp13,1,0.01,0.1,0.01,"Goal – saturation, error squared",10k
+exp14,1,0.01,1,0.01,"Goal – saturation, error squared",10k
+exp15,1,0.01,0.01,0.1,"Goal – saturation, error squared",10k
+exp16,1,0.01,0.01,1,"Goal – saturation, error squared",10k
+exp17,2,0.01,0.01,0.01,"Goal – saturation, error squared",10k
