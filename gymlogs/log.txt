@@ -2,20 +2,20 @@ Logging to /home/acit/gymfc/rlgymdronecontrol/gymlogs/
 ********** Iteration 0 ************
 Optimizing...
      pol_surr |    pol_entpen |       vf_loss |            kl |           ent
-     -0.00296 |       0.00000 |    5011.00146 |       0.00063 |       5.67065
+     -0.00099 |       0.00000 |    1946.54126 |       0.00077 |       5.67443
 Evaluating losses...
-     -0.00812 |       0.00000 |    4947.18750 |       0.00179 |       5.66371
-------------------------------
-| EpisodesSoFar   | 1        |
-| EpLenMean       | 1e+03    |
-| EpRewMean       | -4.2e+03 |
-| EpThisIter      | 1        |
-| ev_tdlam_before | -0.00127 |
-| loss_ent        | 5.66     |
-| loss_kl         | 0.00179  |
-| loss_pol_entpen | 0        |
-| loss_pol_surr   | -0.00812 |
-| loss_vf_loss    | 4.95e+03 |
-| TimeElapsed     | 4.88     |
-| TimestepsSoFar  | 1e+03    |
-------------------------------
+     -0.00643 |       0.00000 |    1907.51978 |       0.00079 |       5.66948
+-------------------------------
+| EpisodesSoFar   | 1         |
+| EpLenMean       | 1e+03     |
+| EpRewMean       | -2.68e+03 |
+| EpThisIter      | 1         |
+| ev_tdlam_before | 0.00327   |
+| loss_ent        | 5.67      |
+| loss_kl         | 0.000794  |
+| loss_pol_entpen | 0         |
+| loss_pol_surr   | -0.00643  |
+| loss_vf_loss    | 1.91e+03  |
+| TimeElapsed     | 12.4      |
+| TimestepsSoFar  | 1e+03     |
+-------------------------------

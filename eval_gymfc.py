@@ -56,7 +56,7 @@ class ModelEval:
 		U.load_variables(tp.model_path)
 
 		# Make Training Log
-		#self.train_log = TrainLog(tp.model_dir)
+	#	self.train_log = TrainLog(tp.model_dir)
 		
 		# Setup gym
 		env = gym.make(self.env_id)
@@ -93,6 +93,7 @@ class ModelEval:
 			# Run Environment
 			while done != True:
 				#action = rand_action(env)
+#				action = env.action_space.sample() # Random action for ctrl
 				action = pi.act(stochastic=False, ob=ob)[0]  # choose action	
 				ob, r, done, info = env.step(action)  # perform action
 				des = env.omega_target  # desired angular velocities

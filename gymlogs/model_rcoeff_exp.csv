@@ -1,0 +1,25 @@
+Model,cr,ce,cs,cg,Notes,eps trained
+exp1,1,1,1,1,"Goal – saturation, error squared",5k
+exp2,1,0,0,0,"Goal – saturation, error squared",5k
+exp3,1,1,5,1,"Goal – saturation, error squared",5k
+exp4,1,1,1,5,"Goal – saturation, error squared",5k
+exp5,0.01,0.01,0.01,0.01,"Goal – saturation, error squared",5k
+exp6,1,2,1,1,"Goal – saturation, error squared",5k
+exp7,5,1,1,1,"Goal – saturation, error squared",5k
+exp8,1,5,1,1,"Goal – saturation, error squared",5k
+exp9,1,5,20,12,"Goal – saturation, error squared",5k
+exp10,1,0.01,0.01,0.01,"Goal – saturation, error squared",10k
+exp11,1,0.1,0.01,0.01,"Goal – saturation, error squared",10k
+exp12,1,1,0.01,0.01,"Goal – saturation, error squared",10k
+exp13,1,0.01,0.1,0.01,"Goal – saturation, error squared",10k
+exp14,1,0.01,1,0.01,"Goal – saturation, error squared",10k
+exp15,1,0.01,0.01,0.1,"Goal – saturation, error squared",10k
+exp16,1,0.01,0.01,1,"Goal – saturation, error squared",10k
+exp17,2,0.01,0.01,0.01,"Goal – saturation, error squared",10k
+exp18,3,0.1,0.01,0.01,"Goal – saturation, error squared",10k
+exp19,1,0.8,0.001,0.1,"Goal – saturation, error squared",10k
+exp20,1,0.7,0.01,1,"Goal – saturation, error squared",10k
+exp21,1,0.7,0.01,0.01,"Goal – saturation, error squared",10k
+exp22,1,1,0,0,no goal or speed,10k
+exp23,1,0.6,0,0,no goal or speed,10k
+exp24,0,0,1,0,no goal or speed,10k

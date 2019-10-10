@@ -29,8 +29,10 @@ def cof(exps,ind):
 	return [exps['cr'][ind],exps['ce'][ind],exps['cs'][ind],exps['cg'][ind]]
 
 def loadExpEvals(exps):
+	print('Loading Saved Evaluations...')
 	mes = []
 	for i in range(len(exps['Model'])):
+#		print(exps['Model'][i], type(exps['Model'][i]))
 		me = eg.loadEval(exps['Model'][i])
 		mes.append(me)
 
@@ -59,42 +61,6 @@ def initRewards(exps):
 	me = eg.ModelEval(exps['Model'][i],'AttFC_GyroErr1_M4_Ep-v0')
 	me.evalModel()
 	me.saveEval(save_name='init'+str(i))
-
-def rewardEval(exps, ctr):
-#FINISH
-# Compares trained reward values with untrained reward values of the same exp
-	mes = loadExpEvals(exps) #Load evaluations
-	avg_rwds = []
-	ctr_avg_rwds = []
-	avg_diff = []
-
-#	for i in range(len(exps['Model'])):
-#		for k in range(len(ctr.eps)):
-#			_,_,_,_,_,ctrtots = computeReward(ctr.eps[k],cof(exps,i))
-#			ctr_avg_rwds.append(ctrtots)
-#		print(np.mean(ctr_avg_rwds, axis=0))
-
-	for i in range(len(exps['Model'])): 
-		rwds = []
-		ctr_rwds = []
-		rwd_dif = []
-		for j in range(len(mes[i].eps)):
-			# Calc untrained rewards as many times as trained reward eps
-			_,_,_,_,_,ctrtots = computeReward(ctr.eps[j%len(mes[i].eps)],cof(exps,i))
-			ctr_rwds.append(np.array(ctrtots))
-
-			# Calc trained rewards
-			_,_,_,_,_,tots = computeReward(mes[i].eps[j],cof(exps,i))
-			rwds.append(np.array(tots))
-		avg_rwds.append(np.mean(rwds,axis=0))
-		ctr_avg_rwds.append(np.mean(ctr_rwds,axis=0))
-	
-	print(avg_rwds)
-	print(ctr_avg_rwds)
-	dif_avg = np.array(avg_rwds)-np.array(ctr_avg_rwds)
-	perc_avg = np.abs((np.array(avg_rwds)-np.array(ctr_avg_rwds))/np.array(avg_rwds))
-	print('dif: ', dif_avg)
-	print('pec dif: ', perc_avg)
 
 
 def riseTimes(mes):
@@ -285,6 +251,8 @@ def expandEvals(mes):
 	return aexps
 
 def rlrlANOVA(mes):
+	aexps = expandEvals(mes)
+
 	print('-----RL Controller Error ANOVA-----')
 	amod = ols('error ~ model', data=aexps).fit()
 	atable = sm.stats.anova_lm(amod, typ=2)
@@ -300,6 +268,8 @@ def rlrlANOVA(mes):
 
 def rlrlRMANOVA(mes):
 	# RL-RL ANOVA RM
+	aexps = expandEvals(mes)
+
 	print('********** RL Controller Error RMANOVA **********')
 	aexps['s_id']=(np.array(aexps.index.values.tolist())+1).tolist()
 	avrm = AnovaRM(aexps,'error','s_id',within=['model'])
@@ -320,119 +290,9 @@ def rlrlRMANOVA(mes):
 
 def rlpidttest(mes, pidmes):
 	apidexp = expandEvals(pidmes)
-	rlexp = expandEvals([mes[8]])
-
-if __name__ == '__main__':
-	tg.setVars()
-	rip.loadEval('pid')
-	coeff_filename = 'model_rcoeff_exp'
-	exp_path = os.environ['GYMFC_EXP_MODELSDIR']+coeff_filename+'.csv'
-	exps = readExp(exp_path)
-
-	# Create Evaluations for all models
-#	runEvals(exps)
-
-	pidmes = []
-	pidme = rip.loadEval('pid')
-	pidmes.append(pidme)
-#	viewResponses(pidmes)
-	pidexp = {'Model':['pid'],'cr':[0],'ce':[0],'cs':[0],'cg':[0]}
-	pidexp = pd.DataFrame(pidexp)
-	pidrt = riseTimes(pidmes)
-	pidexp['rise_times'] = pidrt # add risetime to df
-	pidmod_errs = errs(pidmes)
-	pidexp['errors'] = pidmod_errs # add errors to df
-	pidmod_eng = eng(pidmes)
-	pidexp['energy'] = pidmod_eng # add energy to df
-
-	mes = loadExpEvals(exps)
-
-#	viewResponses(mes, 8)
-#	for me_id in range(len(mes)):
-#		viewResponses(mes, me_id)
-	# Reward Learning Evaluation
-#	ctr = eg.loadEval('ctr')
-#	rewardEval(exps,ctr)
-
-	# External Metrics
-	rt = riseTimes(mes)
-	exps['rise_times'] = rt # add risetime to df
-	mod_errs = errs(mes)
-	exps['errors'] = mod_errs # add errors to df
-	mod_eng = eng(mes)
-	exps['energy'] = mod_eng # add energy to df
-	print(exps.append(pidexp))
-
-	# Create Dataframe for anova
-	apidexp = expandEvals(pidmes)
-	rlexp = expandEvals([mes[8]]) #Favorite controller
-	aexps = expandEvals(mes)
-	print(len(apidexp['error']), len(rlexp['error']))
-
-	
-	
-	# r^2 scores of coefficients
-#	r2s = [r2_score(exps['cr'],exps['errors']),
-#		r2_score(exps['ce'],exps['energy']),
-#		r2_score(exps['cs'],exps['rise times'])]
-#	print(r2s)
-
-	#Correlation matrix
-	c_exps = exps.drop(columns='Model')
-	c_exps = c_exps.astype('float')
-	corr = c_exps.corr()
-	print(corr)
-	print('cr x errors:', corr['cr']['errors'])
-	print('ce x energy:', corr['ce']['energy'])
-	print('cs x rise_times:', corr['cs']['rise_times'])
-
-	#MANOVA
-#	mnv = MANOVA.from_formula('rise_times + errors + energy ~ ce', data=exps)
-#	print(mnv.mv_test())
-
-	#Multiple Linear Regression
-#	est = smf.ols(formula='rise_times ~ cr + ce + cs + cg', data=exps).fit()
-#	print(est.summary())
-#	est = smf.ols(formula='errors ~ cr + ce + cs + cg', data=exps).fit()
-#	print(est.summary())
-#	est = smf.ols(formula='energy ~ cr + ce + cs + cg', data=exps).fit()
-#	print(est.summary())
-
-	#RL-RL ANOVA
-	print('-----RL Controller Error ANOVA-----')
-	amod = ols('error ~ model', data=aexps).fit()
-	atable = sm.stats.anova_lm(amod, typ=2)
-	print(atable)
-	print('-----RL Controller Speed ANOVA-----')
-	amod = ols('rise_time ~ model', data=aexps).fit()
-	atable = sm.stats.anova_lm(amod, typ=2)
-	print(atable)
-	print('-----RL Controller Energy ANOVA-----')
-	amod = ols('energy ~ model', data=aexps).fit()
-	atable = sm.stats.anova_lm(amod, typ=2)
-	print(atable)
-
-	# RL-RL ANOVA RM
-	print('********** RL Controller Error RMANOVA **********')
-	aexps['s_id']=(np.array(aexps.index.values.tolist())+1).tolist()
-	avrm = AnovaRM(aexps,'error','s_id',within=['model'])
-	rma = avrm.fit()
-	print(rma)
-
-	print('********** RL Controller Error RMANOVA **********')
-	aexps['s_id']=(np.array(aexps.index.values.tolist())+1).tolist()
-	avrm = AnovaRM(aexps,'rise_time','s_id',within=['model'])
-	rma = avrm.fit()
-	print(rma)
-
-	print('********** RL Controller Error RMANOVA **********')
-	aexps['s_id']=(np.array(aexps.index.values.tolist())+1).tolist()
-	avrm = AnovaRM(aexps,'energy','s_id',within=['model'])
-	rma = avrm.fit()
-	print(rma)
-
+	rlexp = expandEvals([mes[1]])
 	rl_pid=rlexp.append(apidexp)
-	#RL-PID Test
+
 	print('********** PID RL, Paired T Test **********')
 	print('----- Error -----')
 	ttest, pval = stats.ttest_rel(apidexp['error'], rlexp['error'])
@@ -443,6 +303,205 @@ if __name__ == '__main__':
 	print('----- Energy -----')
 	ttest, pval = stats.ttest_rel(apidexp['energy'], rlexp['energy'])
 	print('t: ',ttest, ' p: ', pval)
+
+
+def r2sExp(exps):
+	# r^2 scores of coefficients
+	r2s = [r2_score(exps['cr'],exps['errors']),
+		r2_score(exps['ce'],exps['energy']),
+		r2_score(exps['cs'],exps['rise times'])]
+	print(r2s)
+
+def corrsExp(exps):
+	c_exps = exps.drop(columns='Model')
+	c_exps = c_exps.astype('float')
+	corr = c_exps.corr()
+	print(corr)
+	print('cr x errors:', corr['cr']['errors'])
+	print('ce x energy:', corr['ce']['energy'])
+	print('cs x rise_times:', corr['cs']['rise_times'])
+
+def mvsExp(exps):
+	#MANOVA
+	mnv = MANOVA.from_formula('rise_times + errors + energy ~ ce', data=exps)
+	print(mnv.mv_test())
+
+	#Multiple Linear Regression
+	est = ols(formula='rise_times ~ cr + ce + cs + cg', data=exps).fit()
+	print(est.summary())
+	est = ols(formula='errors ~ cr + ce + cs + cg', data=exps).fit()
+	print(est.summary())
+	est = ols(formula='energy ~ cr + ce + cs + cg', data=exps).fit()
+	print(est.summary())
+
+def extMetric(mes, exps):
+	rt = riseTimes(mes)
+	exps['rise_times'] = rt # add risetime to df
+	mod_errs = errs(mes)
+	exps['errors'] = mod_errs # add errors to df
+	mod_eng = eng(mes)
+	exps['energy'] = mod_eng # add energy to df
+
+	return exps
+
+def rewardEval(exps, ctr):
+#FINISH
+# Compares trained reward values with untrained reward values of the same exp
+	mes = loadExpEvals(exps) #Load evaluations
+	avg_rwds = []
+	ctr_avg_rwds = []
+	avg_diff = []
+
+#	for i in range(len(exps['Model'])):
+#		for k in range(len(ctr.eps)):
+#			_,_,_,_,_,ctrtots = computeReward(ctr.eps[k],cof(exps,i))
+#			ctr_avg_rwds.append(ctrtots)
+#		print(np.mean(ctr_avg_rwds, axis=0))
+
+	for i in range(len(exps['Model'])):
+		print('Evaluating reward for: {}'.format(exps['Model'][i])) 
+		rwds = []
+		ctr_rwds = []
+		rwd_dif = []
+		for j in range(len(mes[i].eps)):
+			#print('eps {}'.format(j))
+			# Calc untrained rewards as many times as trained reward eps
+			_,_,_,_,_,ctrtots = computeReward(ctr.eps[j%len(mes[i].eps)],cof(exps,i))
+			ctr_rwds.append(np.array(ctrtots))
+
+			# Calc trained rewards
+			_,_,_,_,_,tots = computeReward(mes[i].eps[j],cof(exps,i))
+			rwds.append(np.array(tots))
+		avg_rwds.append(np.mean(rwds,axis=0))
+		ctr_avg_rwds.append(np.mean(ctr_rwds,axis=0))
+	
+#	print(avg_rwds)
+#	print(ctr_avg_rwds)
+	re_col = ['rr','re','rs','rg','tot']
+	pre_col = ['prr','pre','prs','prg','ptot']
+	dif_avg = np.array(avg_rwds)-np.array(ctr_avg_rwds)
+	dif_avg = pd.DataFrame(dif_avg, columns=re_col)
+	perc_avg = np.abs((np.array(avg_rwds)-np.array(ctr_avg_rwds))/np.array(avg_rwds))
+	perc_avg = pd.DataFrame(perc_avg, columns=pre_col)
+#	print('dif: ', dif_avg)
+#	print('pec dif: ', perc_avg)
+
+	#Save Reward Evaluation
+	exps=exps.join(dif_avg)
+	exps=exps.join(perc_avg)
+
+	spath = os.environ['OPENAI_LOGDIR']+'reward_a.csv'
+	print('saving to {}'.format(spath))
+	exps.to_csv(spath)
+
+def loadRewards(rpath):
+	return pd.read_csv(rpath)
+
+def printPDLT(df):
+	pass
+
+def main():
+	tg.setVars()
+	rip.loadEval('pid')
+	# Coefficient file setup
+	coeff_filename = 'model_rcoeff_exp_norm'
+	exp_path = os.environ['OPENAI_LOGDIR']+coeff_filename+'.csv'
+	# External Metric file setup
+	ext_filename = 'ext_'+coeff_filename
+	ext_path = os.environ['OPENAI_LOGDIR']+ext_filename+'.csv'
+	exps = readExp(exp_path)
+
+	# Create Evaluations for all models
+#	runEvals(exps)
+
+	# PID setup
+	pidmes = []
+	pidme = rip.loadEval('pid')
+	pidmes.append(pidme)
+	pidexp = {'Model':['pid'],'cr':[0],'ce':[0],'cs':[0],'cg':[0]}
+	pidexp = pd.DataFrame(pidexp)
+#	viewResponses(pidmes)
+
+	ctrmes = []
+	ctrme = rip.loadEval('ctr')
+	ctrmes.append(ctrme)
+	ctrexp = {'Model':['ctr'],'cr':[0],'ce':[0],'cs':[0],'cg':[0]}
+	ctrexp = pd.DataFrame(ctrexp)
+
+#	exps = pd.read_csv(ext_path, index_col=0) # Load exps instead of generating
+#	print(exps)
+	mes = loadExpEvals(exps)
+
+	# External Metrics
+	pidexp = extMetric(pidmes, pidexp)
+	ctrexp = extMetric(ctrmes, ctrexp)
+	exps = extMetric(mes, exps)
+
+	# Save External Metrics
+#	exps.to_csv(ext_path)
+
+	tex = exps.append(pidexp)
+	all_exp = tex.append(ctrexp)
+	print(all_exp)
+
+
+
+#	viewResponses(mes, 8)
+#	for me_id in range(len(mes)):
+#		viewResponses(mes, me_id)
+
+
+	# Reward Learning Evaluation
+#	ctr = eg.loadEval('ctr')
+#	rewardEval(exps,ctr)
+#	spath = os.environ['OPENAI_LOGDIR']+'reward_a.csv'
+#	rexps = loadRewards(spath)
+
+
+
+	#Correlation matrix
+#	corrsExp(exps)
+
+	#RL-RL ANOVA
+#	rlrlANOVA(mes)
+
+	# RL-RL ANOVA RM
+#	rlrlRMANOVA(mes)
+
+	#RL-PID Test
+#	rlpidttest(mes, pidmes)
+
+	#Multi-variate statistics
+#	mvsExp(exps)
+	return(all_exp)
+
+if __name__ == '__main__':
+#	main()
+	tg.setVars()
+	env_id = 'AttFC_GyroErr1_M4_Ep-v0'
+#	rip.main(env_id, 17)
+	me = eg.ModelEval('exp7',env_id)
+	me.evalModel()
+	me.proc_eval.plotResponse()
+
+#	me = eg.ModelEval('exp11',env_id)
+#	me.evalModel()
+#	me.proc_eval.plotResponse()
+
+#	me = eg.ModelEval('exp16',env_id)
+#	me.evalModel()
+#	me.proc_eval.plotResponse()
+
+#	me = eg.ModelEval('exp14',env_id)
+#	me.evalModel()
+#	me.proc_eval.plotResponse()
+
+
+
+
+
+
+
 
 
 
