@@ -27,7 +27,7 @@ def noescExp():
 	tp.num_timesteps = num_eps*1000
 
 	# Name Model
-	tp.modelName('exp25')
+	tp.modelName('exp26')
 
 	#Run Training
 	with tg.U.tf.Graph().as_default():

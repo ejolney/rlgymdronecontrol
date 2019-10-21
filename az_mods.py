@@ -17,6 +17,7 @@ from statsmodels.stats.anova import AnovaRM
 from baselines.common import tf_util as U
 from sklearn.metrics import r2_score
 from statsmodels.multivariate.manova import MANOVA
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 
 def readExp(exp_path):
@@ -290,7 +291,7 @@ def rlrlRMANOVA(mes):
 
 def rlpidttest(mes, pidmes):
 	apidexp = expandEvals(pidmes)
-	rlexp = expandEvals([mes[1]])
+	rlexp = expandEvals([mes[22]])
 	rl_pid=rlexp.append(apidexp)
 
 	print('********** PID RL, Paired T Test **********')
@@ -400,6 +401,22 @@ def loadRewards(rpath):
 def printPDLT(df):
 	pass
 
+def normalTest(samples):
+	for samp in range(len(samples)):
+		k2, p = stats.normaltest(samples[samp])
+		#print(k2)
+		print('Samples {} p value: {}'.format(samp,p))
+
+def samps(me):
+	r=[]
+	p=[]
+	y=[]
+	for ep in me.eps:
+		r.append(ep['droll_v'][0])
+		p.append(ep['dpitch_v'][0])
+		y.append(ep['dyaw_v'][0])
+	return r,p,y
+
 def main():
 	tg.setVars()
 	rip.loadEval('pid')
@@ -444,7 +461,7 @@ def main():
 	all_exp = tex.append(ctrexp)
 	print(all_exp)
 
-
+#	normalTest(exps)
 
 #	viewResponses(mes, 8)
 #	for me_id in range(len(mes)):
@@ -473,16 +490,32 @@ def main():
 
 	#Multi-variate statistics
 #	mvsExp(exps)
-	return(all_exp)
+#	mexps = expandEvals(mes)
+#	tkr=pairwise_tukeyhsd(mexps['error'], mexps['model'])
+#	tke=pairwise_tukeyhsd(mexps['energy'], mexps['model'])
+#	tks=pairwise_tukeyhsd(mexps['rise_time'], mexps['model'])
+#	tkrpd = pd.DataFrame(tke._results_table, columns=tke._results_table[0]).drop(0)
+#	print (tke)
+#	print (pairwise_tukeyhsd(mexps['energy'], mexps['model']))
+#	print (pairwise_tukeyhsd(mexps['rise_time'], mexps['model']))
+#	return(all_exp)
+#	return(tke)
+
 
 if __name__ == '__main__':
-#	main()
-	tg.setVars()
-	env_id = 'AttFC_GyroErr1_M4_Ep-v0'
+	main()
+#	tg.setVars()
+#	pidme=rip.loadEval('pid')
+#	me = eg.loadEval('exp23')
+#	ep = 5
+#	rpyPlot(me,ep=ep,title='Response of RL Controller')
+#	rpyPlot(pidme,ep=ep,title='Response of PID Controller')
+	
+#	env_id = 'AttFC_GyroErr1_M4_Ep-v0'
 #	rip.main(env_id, 17)
-	me = eg.ModelEval('exp7',env_id)
-	me.evalModel()
-	me.proc_eval.plotResponse()
+#	me = eg.ModelEval('exp7',env_id)
+#	me.evalModel()
+#	me.proc_eval.plotResponse()
 
 #	me = eg.ModelEval('exp11',env_id)
 #	me.evalModel()

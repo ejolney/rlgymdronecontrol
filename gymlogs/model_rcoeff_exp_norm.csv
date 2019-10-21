@@ -22,4 +22,4 @@ exp20,1,0.7,0.01,1,"Goal – saturation, error squared",10k
 exp21,1,0.7,0.01,0.01,"Goal – saturation, error squared",10k
 exp22,1,1,0,0,no goal or speed,10k
 exp23,1,0.6,0,0,no goal or speed,10k
-exp24,0,0,1,0,no goal or speed,10k
+exp24,0,0,1,0,speed only,10k
