@@ -1,11 +1,10 @@
-import os, csv, pickle, json
+import os, csv, pickle
 import numpy as np
 import pandas as pd
 from baselines.common import tf_util as U
 from mpi4py import MPI
 import gymfc
 import gym
-import sqlite3
 import matplotlib.pyplot as plt
 import train_gymfc as tg
 

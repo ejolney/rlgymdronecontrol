@@ -1,2 +1,0 @@
-num_timesteps,timesteps_per_actorbatch,clip_param,entcoeff,optim_epochs,optim_stepsize,optim_batchsize,gamma,lam,schedule,seed,model_path,entcoedd,model_name,model_dir,nodes_per_layer,num_layers
-6000,500,0.9,0.0,5,0.0001,32,0.99,0.95,linear,0,/home/acit/gymlogs/models/time_x_clip_param_exp_0.9/time_x_clip_param_exp_0.9,0,time_x_clip_param_exp_0.9,/home/acit/gymlogs/models/time_x_clip_param_exp_0.9,2,32

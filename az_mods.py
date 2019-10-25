@@ -1,6 +1,6 @@
 import time, os, csv, math, sys
 
-sys.path.insert(1, '/home/acit/gymfc/examples/controllers')
+sys.path.insert(1, '/home/acit/gymfc/examples/controllers') #set to gymfc path iris
 import run_iris_pid as rip
 
 import train_gymfc as tg
@@ -289,7 +289,25 @@ def rlrlRMANOVA(mes):
 	rma = avrm.fit()
 	print(rma)
 
-def rlpidttest(mes, pidmes):
+def rlpidwttest(mes, pidmes):
+	apidexp = expandEvals(pidmes)
+	rlexp = expandEvals([mes[22]])
+	rl_pid=rlexp.append(apidexp)
+
+	zm='zsplit'
+	crt=True
+	print('********** PID RL, Wilcoxon T Test **********')
+	print('----- Error -----')
+	ttest, pval = stats.wilcoxon(apidexp['error'], rlexp['error'], zero_method=zm, correction=crt)
+	print('t: ',ttest, ' p: ', pval)
+	print('----- Speed -----')
+	ttest, pval = stats.wilcoxon(apidexp['rise_time'], rlexp['rise_time'], zero_method=zm, correction=crt)
+	print('t: ',ttest, ' p: ', pval)
+	print('----- Energy -----')
+	ttest, pval = stats.wilcoxon(apidexp['energy'], rlexp['energy'], zero_method=zm, correction=crt)
+	print('t: ',ttest, ' p: ', pval)
+
+def rlpidttest(mes, pidmes): # Non-parametric t-test
 	apidexp = expandEvals(pidmes)
 	rlexp = expandEvals([mes[22]])
 	rl_pid=rlexp.append(apidexp)
@@ -402,10 +420,16 @@ def printPDLT(df):
 	pass
 
 def normalTest(samples):
-	for samp in range(len(samples)):
-		k2, p = stats.normaltest(samples[samp])
-		#print(k2)
-		print('Samples {} p value: {}'.format(samp,p))
+	r,pt,y = samps(samples[0])
+#	for samp in range(len(samples)):
+#		k2, p = stats.normaltest(samples[samp])
+#		#print(k2)
+	k2, p = stats.normaltest(r)
+	print('Samples {} p value: {}'.format('roll',p))
+	k2, p = stats.normaltest(pt)
+	print('Samples {} p value: {}'.format('pitch',p))
+	k2, p = stats.normaltest(y)
+	print('Samples {} p value: {}'.format('yaw',p))
 
 def samps(me):
 	r=[]
@@ -457,11 +481,11 @@ def main():
 	# Save External Metrics
 #	exps.to_csv(ext_path)
 
-	tex = exps.append(pidexp)
-	all_exp = tex.append(ctrexp)
-	print(all_exp)
+#	tex = exps.append(pidexp)
+#	all_exp = tex.append(ctrexp)
+#	print(all_exp)
 
-#	normalTest(exps)
+#	normalTest(mes)
 
 #	viewResponses(mes, 8)
 #	for me_id in range(len(mes)):
@@ -486,7 +510,8 @@ def main():
 #	rlrlRMANOVA(mes)
 
 	#RL-PID Test
-#	rlpidttest(mes, pidmes)
+	rlpidttest(mes, pidmes)
+	rlpidwttest(mes, pidmes)
 
 	#Multi-variate statistics
 #	mvsExp(exps)

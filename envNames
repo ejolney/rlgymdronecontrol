@@ -1,8 +1,0 @@
-gymfc environment Names:
-
-1. 'AttFC_GyroErr-MotorVel_M4_Ep-v0'
- Original
-2. 'AttFC_GyroErr-MotorVel_M4_Con-v0'
- Continuous change for 60 seconds
-3. 'AttFC_GyroErr10_M4_Ep-v0' 'AttFC_GyroErr1_M4_Ep-v0'
- Without ESC feedback

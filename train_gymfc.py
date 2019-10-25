@@ -12,26 +12,21 @@ class trainParams():
 	def __init__(self):
 		self.num_timesteps = 4000  # maximum number of timesteps to run learning
 		self.timesteps_per_actorbatch = 1000  # Horizon(T)
-		self.clip_param = 0.1  # ??? epsilon for clipping
+		self.clip_param = 0.1  # epsilon for clipping
 		self.entcoeff = 0.0  # entropy coefficient for exploration
 		self.optim_epochs = 10 # How many times to run optimization step
-		self.optim_stepsize = 1e-4 # ??? Adam stepsize, alpha/learning rate?
+		self.optim_stepsize = 1e-4 # Adam stepsize
 		self.optim_batchsize = 64 # How many samples to use for optimization
 		self.gamma = 0.99 # Discount factor of reward per future timestep
 		self.lam = 0.95  # Advantage estimator parameter (lambda)
 		self.schedule='linear'  # Change action randomness through 
 		self.seed = 0  # Which random seed to use
 		self.model_path = None # Where to save model
-#		self.model_name = None # Model name
 
 	def modelName(self, name):
 		self.model_name=name
 		self.model_dir=os.environ['GYMFC_EXP_MODELSDIR']+name
 		self.model_path=self.model_dir+'/'+name
-#		if self.model_path:
-#			return self.model_path.split('/')[len(self.model_path.split('/'))-1]
-#		else:
-#			raise Exception('this trainParams has no model_path set')
 
 	def modelDir(self):
 		model_name = self.modelName()
@@ -155,6 +150,7 @@ def runExp():
 	with U.tf.Graph().as_default():
 		train(train_params, policy_params, env_id)
 
+# Automatically set environment variables
 print ('Setting Environment Variables')
 setVars()
 
